@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cars;
 use Illuminate\Http\Request;
+use App\Http\Requests\CarsRequest;
+use Illuminate\Http\Response;
 
 class CarsController extends Controller
 {
@@ -14,17 +16,7 @@ class CarsController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return Cars::paginate(10);
     }
 
     /**
@@ -33,9 +25,9 @@ class CarsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CarsRequest $request)
     {
-        //
+        return Cars::create($request->validated());
     }
 
     /**
@@ -44,20 +36,9 @@ class CarsController extends Controller
      * @param  \App\Models\Cars  $cars
      * @return \Illuminate\Http\Response
      */
-    public function show(Cars $cars)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cars  $cars
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cars $cars)
-    {
-        //
+        return Cars::findOrFail($id);
     }
 
     /**
@@ -67,9 +48,10 @@ class CarsController extends Controller
      * @param  \App\Models\Cars  $cars
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cars $cars)
+    public function update(CarsRequest $request, Cars $cars)
     {
-        //
+        $cars->fill($request->validated());
+        return $cars->save();
     }
 
     /**
@@ -80,6 +62,9 @@ class CarsController extends Controller
      */
     public function destroy(Cars $cars)
     {
-        //
+        if ($cars->delete()) {
+            return response(null, Response::HTTP_NO_CONTENT);
+        }
+        return null;
     }
 }
